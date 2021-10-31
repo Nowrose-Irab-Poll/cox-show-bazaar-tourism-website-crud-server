@@ -23,6 +23,7 @@ async function run() {
     console.log("Connected to db");
     const database = client.db("cox_show_db");
     const packageCollection = database.collection("packages");
+    const orderCollection = database.collection("orders");
 
     //Packages GET API
     app.get("/packages", async (req, res) => {
@@ -42,10 +43,28 @@ async function run() {
       res.send(result);
     });
 
+    //All Orders GET API
+    app.get("/orders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+
+      res.send(orders);
+    });
+
     //Order POST API
-    app.post("place-order/", async (req, res) => {
-      console.log(req.body);
-      res.send("This is place order response");
+    app.post("/place-order", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+
+      res.send(result);
+    });
+
+    //Order DELETE API
+    app.delete("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      res.send(result);
     });
   } finally {
     // await client.close()
