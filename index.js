@@ -24,6 +24,7 @@ async function run() {
     const database = client.db("cox_show_db");
     const packageCollection = database.collection("packages");
     const orderCollection = database.collection("orders");
+    const siteCollection = database.collection("sites");
 
     //Packages GET API
     app.get("/packages", async (req, res) => {
@@ -49,6 +50,25 @@ async function run() {
       const orders = await cursor.toArray();
 
       res.send(orders);
+    });
+
+    //User wise Orders GET API
+    app.get("/orders/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+
+      const cursor = orderCollection.find(query);
+
+      const result = await cursor.toArray();
+
+      res.send(result);
+    });
+
+    //All Sites GET API
+    app.get("/sites", async (req, res) => {
+      const cursor = siteCollection.find({});
+      const sites = await cursor.toArray();
+      res.send(sites);
     });
 
     //Order POST API
