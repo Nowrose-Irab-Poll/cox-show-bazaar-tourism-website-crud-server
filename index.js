@@ -34,13 +34,18 @@ async function run() {
     //Single package GET API
     app.get("/packages/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
 
       const query = { _id: ObjectId(id) };
 
       const result = await packageCollection.findOne(query);
 
       res.send(result);
+    });
+
+    //Order POST API
+    app.post("place-order/", async (req, res) => {
+      console.log(req.body);
+      res.send("This is place order response");
     });
   } finally {
     // await client.close()
