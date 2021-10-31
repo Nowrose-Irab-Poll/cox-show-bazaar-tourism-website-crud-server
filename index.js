@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
+const ObjectId = require("mongodb").ObjectID;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -23,10 +24,23 @@ async function run() {
     const database = client.db("cox_show_db");
     const packageCollection = database.collection("packages");
 
+    //Packages GET API
     app.get("/packages", async (req, res) => {
       const cursor = packageCollection.find({});
       const packages = await cursor.toArray();
       res.send(packages);
+    });
+
+    //Single package GET API
+    app.get("/packages/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+
+      const query = { _id: ObjectId(id) };
+
+      const result = await packageCollection.findOne(query);
+
+      res.send(result);
     });
   } finally {
     // await client.close()
